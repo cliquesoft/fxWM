@@ -1,0 +1,534 @@
+.\"Man page for FXwm, by Dave Henderson.
+.TH FXwm 1 "2018 July 11"
+.SH NAME
+\fIFXwm\fR - For XiniX Window Manager
+
+
+.SH SYNOPSIS
+.B FXwm
+-S(upervisor) FILE
+[-BG]
+[-FG]
+[-F(ullscreen)]
+[-M(aximized)]
+[-E(xecute) FILE]
+[-C(ursor) #]
+
+[-h(elp)]
+[-V(ersion)]
+
+[-d(isplay) HOST:#.#]
+[-v(isual) #]
+
+[-g(eometry) WxH+X+Y]
+[-l(imit) WxH]
+[-o(ffset) T:R:B:L]
+[-c(onfine)]
+
+[-f(ullscreen)]
+[-m(aximum) WxH]
+
+[-i(con) DIR]
+[-s(ocket) FILE]
+[-p(ipe) FILE]
+
+
+
+.SH TOC
+1.  DESCRIPTION
+2.  CONFIG
+3.  SWITCHES
+4.  SOCKET
+5.  HOTKEYS
+6.  MONITORING
+7.  BUGS
+8.  ACKNOWLEDGEMENTS
+9.  COPYRIGHT
+10. AUTHORS
+
+
+
+.SH DESCRIPTION
+.I FXwm
+is a small and fast X window manager, featuring the most basic
+configuration with as much flexibility as possible. To help achieve
+this goal, our window manager only handles the chrome of each window
+along with the I/O from connected devices such as a keyboard or mouse.
+There is not any built-in functionality to supervise the environment
+such as a taskbar or popup menu. Instead, this functionality will come
+from a complementary software such as web.de, wbar, or even a terminal!
+
+
+.SH .xinitrc / .xsession
+To use FXwm as your window manager after installation (via package
+management or downloading and compiling on your own), you will need to
+create or modify a text file that is parsed during the initialization
+of the X Window system. On modern Linux distros that use a graphical
+login window, the file will be ~/.xsession. For older systems that
+start X after a successful shell login, you will need to modify the
+~/.xinitrc file. To make FXwm as your default window manager, you
+may also have to select it as the default option at the graphical
+login screen.
+
+The file used by your system should look similar to the following:
+
+.nf
+#!/bin/sh
+xsetroot -solid \\#006060
+xrdb .Xresources
+# start xset, xmodmap, other configuration programs
+fxwm -S /usr/local/bin/web.de &
+WindowManager=$!
+# start xterm, other auto-start programs
+wait $WindowManager
+.fi
+
+
+.SH CONFIG
+Since this window manager adheres to the Unix philosophy of "Do one
+thing and do it well", there is not much to configure. Currently the
+only file to manipulate is either located in the global directory
+/etc/fxwm/chrome.css, or in a personal directory ~/.fxwm/chrome.css.
+There are too many declarations to cover here, but each value should
+have an associated short description within the file itself. Further
+configuration of FXwm is only allowed via any passed switches which we
+will cover below.
+
+
+.SH SWITCHES
+As a way to provide additional functionality, FXwm can also accept
+several command line switches. An expanded description of each will
+be covered below. It is important to note that in addition to these
+switches, there are several additional parameters that can be modified
+by editing the config.h file in the source code and recompiling,
+although most users would not be interested in having those values
+changed.
+
+Mandatory switches
+
+.B -S[upervisor]
+Since FXwm does not include any means for starting any programs (e.g.
+from a menu or taskbar), this switch is mandatory and will load the
+desired software that will enable this functionality. All the other
+switches are optional.
+NOTE: this app can not be closed with hotkeys or an 'X' titlebar icon.
+
+Supervisor switches
+
+.B -C[ursor] #
+There may be times when a specific cursor should be used when the
+supervisor has focus. Using this switch will enable that functionality
+by simply passing a numeric value for the desired cursor.
+
+.B -BG
+If you would like to make sure that the supervisor always remains in
+the background (unless manipulated via a socket or window manager
+controller such as wmctrl), then pass this switch.
+
+.B -FG
+Similar to the background switch above, this performs the same action
+but will keep the supervisor in the foreground instead.
+
+.B -E[xecute]
+In some instances, the supervisor might require some other software to
+load before it will work (e.g. webserver and web.ui).  It is important
+to remember that this call is NOT backgrounded due to FXwm checking if
+the call has success or failure.  Typically this value would be for a
+wrapper script that calls the actual binary in the background and then
+verifies things to make sure everything is working accordingly before
+returning success or failure.
+
+.B -F[ullscreen]
+This causes the supervisor to run in fullscreen mode (without a
+titlebar), so it will consume the entire screen, or whatever has
+been specified as the screen size via the -g switch.
+
+.B -M[aximized]
+Just like the -F switch, this causes the supervisor to fill the
+entire screen, but will give the supervisor a titlebar with only
+a minimize button.
+
+Operational switches
+
+.B -h[elp]
+Shows the help screen and exits the program.
+
+.B -V[ersion]
+Shows the version number and exists the program.
+
+.B -d[isplay] host:#.#
+Sets the X display and screen for FXwm to manage. Since X11 is based
+on a client/server model, this option can work with local or remote
+displays. Examples include:
+   -d 0:0.0 (default)
+   -d 0:1.0 (first additional display locally)
+   -d localhost:0.0 (another default)
+   -d 192.168.0.10:0.0 (first display for the device @ 192.168.0.10)
+
+.B -v[isual] #
+Visual number to use (probably only works for non-color-mapped ones)
+
+.B -g[eometry] WxH+X+Y
+When this option has been passed, FXwm will act as though the screen
+is only as large as the values specified by 'W' and 'H' (in pixels),
+and will constrain windows within this area. The 'X' and 'Y' values
+correspond to the offset from the upper left-hand corner of the screen
+designating the top and left boundries where the it begins. Using the
+-l or -o switches, you can further restrict the size and placement of
+application windows within the geometry specified. Starting FXwm
+without this switch will cause it to use the entire screen.
+
+.B -l[imit] WxH
+This switch takes a width and height value (in pixels) and is used as
+a way to limit the area of the screen that application windows can use,
+even when they are maximized. Unlike the -o switch, this area of the
+screen will be centered which makes it useful if the supervisor needs
+to have fixed "toolbars" exposed that will never be covered by windows.
+This would typically be used when the resolution is known and will not
+be adjusted without modifying this value was well (e.g. in a device with
+an embedded display). Without specifying this switch (or -o), the entire
+size of the screen will be used. Also remember that this switch can NOT
+be used in conjunction with -o!
+
+.B -o[ffset] T:R:B:L
+Similar to -l[imit], this switch also limits the size of maximized
+application windows, but instead of setting the dimensions, the full
+screen resolution is used with the offset being reduced from the
+specified edge(s). This is useful when the resolution of the display is
+unknown or could change at any time and also if the supervisor program
+needs any fixed "toolbars" exposed on one or more sides. A '0' value for
+any side will prevent adjustment for that edge. This can NOT be used
+in conjunction with the -l switch!
+
+.B -c[onfine]
+If the -l or -o switches have been passed, you can use this value in
+conjunction so that windows can not be dragged outside the bounds set by
+either of those values.
+
+.B -f[ullscreen]
+Unlike all the other switches, this one does not take a complementary
+value and specifies that all application windows will operate in
+fullscreen mode (no titlebar). This is helpful when FXwm is used as the
+window manager on smaller devices such as smart phones and tablets that
+do not allow windows to be dragged around the screen.
+
+.B -m[aximized]
+As the name suggests, this switch will force each application window to
+run in a maximized state. The difference between this switch and -f is
+that each application window will contain a titlebar.
+
+.B -i[con] DIR
+When the user presses the Alt+Tab buttons, a window will popup showing
+all the running applications. Using this switch, you can let FXwm know
+the directory that should be used to locate the appropriate application
+icon. By default, a sub-directory with the requested icon size (rounded
+up) is checked and if no matching icon is found, it will check in the
+root of the DIR directory for a match. In the absense of that icon, a
+generic icon will be used in its place. So, for example, if the icon
+size was specified as 90px, then the window manager will check for a
+"128x128/?.png" graphic (since 128x128 is the closest, rounded up size)
+and then for a "./?.png" file. If neither exist, then a generic icon
+will be used as a last resort.
+
+.B -s[ocket] FILE
+By default, a socket file to manipulate this window manager is created
+and found at /tmp/.fxwm-control. If you would like to use a different
+path and filename, you can use this switch to specify that information.
+
+.B -p[ipe] FILE
+Similar to the socket file mentioned above, this fifo enables you to
+monitor the window manager for events that get triggered by the user
+so that the system can optionally perform certain desired tasks. Using
+this switch, you can control the location and name of the file which
+is /tmp/.fxwm-monitor by default.
+
+
+.SH SOCKET
+
+This window manager does allow interaction through the use of sockets
+and will allow you manipulate various aspects of the environment using
+software like socat or netcat. We will cover all the available actions
+below but wanted to demonstrate two examples:
+	echo 'list' | ncat -U /tmp/.fxwm-control
+	echo 'activate 0x80024c' | socat - /tmp/.fxwm-control
+
+Single Actions
+
+.B list
+Passing this action will provide a list of all the software currently
+opened in the graphical environment and will be in the following format
+that is separated by tabs:
+
+<Window ID>[<Active>] <Desktop ID> <Host> <Binary> <Window Title>
+
+It is important to note that the active window will have an asterisk
+character (*) following its <Window ID>.
+
+.B activate <Window ID>
+To bring a desired window into the foreground with focus, pass this
+action through the current socket file.
+
+.B close <Window ID>
+As the name suggests, this will close the window associated with the
+passed ID.
+
+.B resize <Window ID> WxH
+Resize any window with this command while passing the new width and
+height desired.
+
+.B move <Window ID> 0+0
+This action will allow you to move a window around the screen via the
+X and Y coordinates passed.
+
+.B BG <Window ID>
+Issuing this command will keep the specified window in the background.
+
+.B FG <Window ID>
+This action works just like the 'BG' command, but will foreground.
+
+.B chrome
+To update chrome adjustments without having to restart FXwm, simply
+issue this command to the socket.
+
+.B disable
+Used to disable all window manager functionality (e.g. screen locking).
+
+.B enable
+Re-enables all the window manager functionality from a 'disable' call.
+
+.B alert "Closable|Icon Path|App Name|Alert Title|Alert Message|Command"
+Sends a popup notification to the user so they can be informed of events
+or to quickly perform some type of pre-defined action. It is important
+to note that you can pass null values to prevent usage or to use default
+values. Also, valid 'closable' values are: 0 or false, 1 or true.
+
+Multi-Actions
+
+.B get/set offset [<0:0:0:0>]
+Allows you to get or set the global window offset.
+
+.B get/set limit [<WxH>]
+To limit the screen area available for windows, issue this action.
+
+.B get/set confine [<0,1>]
+Used to get or set the confine parameter.
+
+.B get/set <Window ID> title [<String>]
+To get or set a windows title, use this action. If you are setting the
+title, you will need to pass the last value shown above.
+
+.B get/set <Window ID> icon [<Path+Filename>]
+Gets or sets the titlebar icon of the desired window.
+
+.B get/set <Window ID> titlebar [<Path+Filename> <String>]
+You can get or set both of the afore mentioned actions in a single
+attempt with this command.
+
+.B get/set <Window ID> state [<String>]
+State changes are accomplished using this command. Possible values are
+minimized, maximized, unmaximized, and fullscreen.
+
+
+.SH HOTKEYS
+
+The mouse works as most would expect to resize, change which window has
+focus, and to maximize, minimize, or possibly shade windows. It is
+important to remember that this window manager only allows a handful of
+keyboard hotkeys to manipulate windows which will be covered below.
+
+Focus Hotkeys
+
+.B Alt+Tab
+Shows a window containing all the running applications allowing you to
+switch the focus to the next task in the list.
+
+.B Shift+Alt+Tab
+Shows the same Alt+Tab window of running applications, but instead of
+cycling forward, this key combination selects the previous task.
+
+Extended Hotkeys
+
+.B Ctrl+Alt+B
+Sends just a "data" value through the monitor FIFO with the intended use being
+the execution of the supervisors' file manager.
+
+.B Ctrl+Alt+D
+Pressing this key combination will echo "desktop" through the monitor FIFO and
+is useful for informing the supervisor to "show the desktop".
+
+.B Ctrl+Alt+L
+Only echo's "lock" through the monitor FIFO with the intended use signaling the
+"Lock Screen" being requested of the supervisor.
+
+.B Ctrl+Alt+R
+This outputs "run" through the monitor FIFO and is used to indicate to the
+supervisor that the user wishes to display the "run" dialog box.
+
+.B Ctrl+Alt+S
+Simply echo's "menu" through the monitor FIFO with the intended use being the
+activation of some type of interaction within the supervisor such as showing a
+"Start Menu" of some type.
+
+.B Ctrl+Alt+Delete
+Echo's a "admin" value through the monitor FIFO with the indended use being an
+administrative screen.
+
+Window Hotkeys
+
+.B Ctrl+Up
+Moves the focused window further up the screen.
+
+.B Ctrl+Down
+Moves the focused window further down the screen.
+
+.B Ctrl+Left
+Moves the focused window further to the left.
+
+.B Ctrl+Right
+Moves the focused window further to the right.
+
+.B Ctrl+PageUp
+Changes the windows status to being the foreground.
+
+.B Ctrl+PageDown
+Changes the windows status to being background.
+
+.B Ctrl+Alt+Up
+Increases the height of the focused window.
+
+.B Ctrl+Alt+Down
+Decreases the height of the focused window.
+
+.B Ctrl+Alt+Right
+Increases the width of the focused window.
+
+.B Ctrl+Alt+Left
+Decreases the width of the focused window.
+
+.B Ctrl+Alt+PageUp
+Increases the width and height of the focused window.
+
+.B Ctrl+Alt+PageDown
+Decreases the width and height of the focused window.
+
+.B Ctrl+Alt+Enter
+Toggle the window state between being maxized and windowed.
+
+.B Ctrl+Alt+Home
+Changes the window state to being iconized.
+
+.B Ctrl+Alt+End
+Causes the currently focused application to close.
+
+Desktop Hotkeys
+
+.B Meta+Tab
+This will advance to the next desktop in the list.
+
+.B Meta+Shift+Tab
+This will cycle to the previous desktop in the list.
+
+.B Meta+F#
+This will take you to a specific desktop.
+
+
+.SH MONITORING
+
+FXwm allows interaction with any supervisor that can read the realtime triggered
+events using a pipe FIFO.  An example of this system is the web.us IPC that the
+web.de project uses to process those actions.  Below covers the different groups
+of alerts and what the intended usage is of the value.
+
+Window States
+
+.B closed
+Indicates a window has been closed.
+
+.B focused
+This is sent when a new window has focus.
+
+.B shaded
+Triggered when a window is shaded.
+
+.B light
+When a window is no longer shaded.
+
+.B maximized
+Used to indicate a window is now maximized.
+
+.B windowed
+Sent when a window is now unmaximized.
+
+.B iconized
+When a window is iconized out of view.
+
+Manager Events
+
+.B run
+Indicates that the user wants to show the "run" dialog box.
+
+.B desktop
+Issued by the user to display the desktop, 'hiding' all opened applications.
+
+.B menu
+Informs the supervisor that the user wants to show the "Start Menu".
+
+.B lock
+Triggered when the user wants to lock the device.
+
+.B data
+When the user wants the supervisor to start the file manager.
+
+.B admin
+Sent when the user wants to load the "Ctrl+Alt+Delete Menu".
+
+
+.SH BUGS
+
+Please visit our website for the latest list of opened bug reports for
+this software project - http://www.cliquesoft.org.
+
+
+.SH ACKNOWLEDGEMENTS
+
+This program is based on the "flwm" window manager that was originally
+created by Bill Spitzak (which was based on the "wm2" window manager by
+Chris Cannam). Michael A. Losh provided some patches and, later, with
+Lauri Kasanen applying updates so that it would work with the Tiny Core
+Linux project. Most of the code base was later re-written and further
+expanded by Dave Henderson et el as FXwm for the XiniX operating system.
+
+
+.SH COPYRIGHT
+
+Copyright (C) 2015-2018 Cliquesoft
+
+This program is free software and is distributed using the Cliquesoft
+Public License (CPLv2) with optional components using the GNU General
+Public License (either version 2 of the License, or at your option,
+any later version).
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the Cliquesoft Public License and
+GNU General Public License along with this library; if not, write to:
+
+   Cliquesoft
+   P.O. Box 782047
+   Orlando, Fl 32878-2047
+
+   The Free Software Foundation, Inc.
+   59 Temple Place
+   Suite 330
+   Boston, MA 02111-1307 USA
+
+
+.SH AUTHORS
+
+Dave Henderson
+Lauri Kasanen
+Portions borrowed from Bill Spitzak with updates from Michael A. Losh
+

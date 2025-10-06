@@ -1,0 +1,323 @@
+/*
+  style.css	This file changes the appearance of the window manager
+		using css-style declarations.  It is important to note
+		that the syntax MUST remain in its provided format. If
+		a declaration is undesired,  comment out or remove it.
+		So if you see something like "margin: 4px 4px 4px 4px"
+		you can not use the shorthand version "margin: 4px"!
+
+		Also all size units, unless otherwise noted, will use
+		pixel values (px) regardless of the specified unit.
+
+  created	2015/07/01 by Dave Henderson (dhenderson@cliquesoft.org or support@cliquesoft.org)
+  updated	2018/07/05 by Dave Henderson (dhenderson@cliquesoft.org or support@cliquesoft.org)
+*/
+
+
+
+
+/* Definitions for the desktop(s) */
+.desktop {					/* The desktop(s) */
+	display: none;				/*	TODO - enables multiple desktops, disabled means only one desktop */
+}
+
+.desktop #cursor {				/* The default cursor value */
+	color: #000000;				/* sets the foreground color of the cursor */
+	background-color: #ffffff;		/* sets the background color of the cursor */
+	cursor: default;			/* 	TODO - pointer, resize, hand, ... */
+}
+
+
+
+
+/* Definitions for all windows */
+.window {					/* The window itself */
+	padding-top: 0px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	width: 200px;				/*	TODO - sets the initial width of the window */
+	height: 300px;				/*	TODO - sets the initial height of the window */
+	background-color: #99ccff;		/* sets the background color of the inactive window */
+						/* http://stackoverflow.com/questions/14176499/change-xlib-window-background-color-with-c */
+						/* http://stackoverflow.com/questions/23051594/how-to-set-xlib-window-background-transparent?rq=1 */
+	border-style: none;			/* sets whether the window has a border, with valid values: none, outset 	DEV NOTE: see the "fl_frame2" line in "Frame::draw()" function of window.cpp */
+	border-radius: 4px;			/* 	TODO - sets the border radius of each window				DEV NOTE: requires transparent background of window itself */
+}
+
+.window:active {
+	background-color: #3399ff;		/* sets the background color of the titlebar */
+}
+
+.window .titlebar {				/* The overall appearance of the titlebar */
+	float: none;				/* sets where the titlebar is located on the window, with valid values: left, right, none (top) */
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	height: 40px;				/* sets the height of the titlebar */
+	background-color: #004d99;		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: solid;			/* sets the border style of the button, with valid values: none, solid, groove, ridge, inset, outset, engraved, embossed */
+	border-color: #222;
+}
+
+.window:active .titlebar {
+	background-color: #004d99;		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: solid;			/* sets the border style of the button, with valid values: none, solid, groove, ridge, inset, outset, engraved, embossed */
+	border-color: #fff;
+}
+
+.window .titlebar #label {			/* The application's label */
+	float: none;				/* sets where the titlebar is located on the window, with valid values: left, right, none (top) */
+	margin-top: 12px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	color: #99ccff;				/* sets the font color of the windows title when the window is inactive/unfocused */
+	font-size: 15px;			/* sets the font size of the windows title */
+	font-family: helvetica;			/*	TODO - sets the font of the titlebar label */
+	font-style: normal;			/* sets the font style of the window title text, with valid values: normal, italic */
+	font-weight: bold;			/* sets the font weight of the window title text, with valid values: normal, bold */
+}
+
+.window:active .titlebar #label {
+	color: #fff;				/* sets the font color of the windows title */
+}
+
+.window .titlebar .icon {			/* The application's icon */
+	display: block;				/* toggles whether the icon is shown or not, with valid values: none, block */
+	float: left;				/* sets the alignment of the apps icon in the titlebar, with valid values: left, right */
+	margin-top: 5px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 5px;
+	width: 30px;
+	height: 30px;
+}
+
+
+
+
+/* Definitions for all the buttons on the titlebar */
+.window .button {
+	float: right;				/* sets the overall alignment of all the buttons in the titlebar, with valid values: left, right, none (centers) */
+	color: #999;				/* sets the button color of all the buttons when the window is inactive/unfocused */
+	font-size: 26px;			/* sets the size of the button contents */
+	background-color: transparent;		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: none;			/* sets the border style of the button, with valid values: none, solid, groove, ridge, inset, outset, engraved, embossed */
+	border-color: #bbb;
+	opacity: 1;				/*	TODO - sets the opacity of all the buttons in the titlebar when the window is inactive/unfocused */
+}
+
+.window .button:hover {
+	background-color: transparent;		/* 	TODO - sets the background color of any button in the titlebar when the mouse hovers over it when the window is inactive/unfocused, with valid values: transparent, #nnnnnn */
+	border-style: none;			/*	TODO - sets the border style of any button in the titlebar when the mouse hovers over it, with valid values: none, solid, ... */
+	border-color: #000;			/*	TODO */
+}
+
+.window:active .button:hover {
+	background-color: transparent;		/* 	TODO - sets the background color of any button in the titlebar when the mouse hovers over it, with valid values: transparent, #nnnnnn */
+	border-style: none;			/*	TODO - sets the border style of any button in the titlebar when the mouse hovers over it, with valid values: none, solid, ... */
+	border-color: #000;			/*	TODO */
+}
+
+
+
+
+/* Definitions for individual buttons on the titlebar */
+.window .button #close {
+	/*display: block;			   NOTE: this button can NOT be hidden!!! */
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	width: 40px;
+	height: 30px;
+	color: #fff;				/* sets the color of this buttons icon */
+	background-color: #c00;
+	border-style: none;
+	border-color: #000;
+	opacity: 1;				/*	TODO - sets the opacity of the faded portion of the buttons icon, with valid values: 0 -OR- 1*/
+}
+.window .button #maximize {
+	display: block;				/* defines if the button should be displayed: block, none */
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	width: 30px;
+	height: 30px;
+	color: #bbb;
+	background-color: transparent;
+	border-style: none;
+	border-color: #000;
+	opacity: 1;				/*	TODO */
+}
+.window .button #minimize {
+	display: block;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	width: 30px;
+	height: 30px;
+	color: #bbb;
+	background-color: transparent;
+	border-style: none;
+	border-color: #000;
+	opacity: 1;				/*	TODO */
+}
+.window .button #shade {
+	display: none;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	width: 30px;
+	height: 30px;
+	color: #bbb;
+	background-color: transparent;
+	border-style: none;
+	border-color: #000;
+	opacity: 1;				/*	TODO - sets the opacity of the faded portion of the buttons icon, with valid values: 0 -OR- 1		DEV NOTE: this just determines whether we should use fl_darker or fl_lighter in the "FrameButton::draw()" of window.cpp */
+}
+
+
+
+
+/* Definitions for alerts */
+#alert {					/* The overall appearance of alerts */
+	top: auto;				/* NOTE: only define two of these values for an X and Y coordinate; 'auto' for the other two */
+	right: 20px;
+	bottom: 50px;
+	left: auto;
+	width: 250px;
+	height: 175px;
+	background-color: #004d99; 		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: solid;			/* sets the border style of the button, with valid values: none, solid */
+	border-color: #99ccff;
+}
+
+#alert #close {
+	margin-top: 5px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 205px;
+	width: 40px;
+	height: 30px;
+	color: #c00;
+	font-size: 20px;
+	font-weight: normal;			/* the weight of the font: bold, normal */
+	background-color: transparent; 		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: none;			/* sets the border style of the button, with valid values: none, solid */
+	border-color: #00f;
+}
+
+#alert #image {
+	display: block;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 20px;
+	width: 32px;
+	height: 32px;
+	background-image: url("/usr/local/share/icons/unknown.png");
+}
+
+#alert #title {
+	display: block;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 70px;
+	color: #3399ff;
+	font-size: 10px;
+	font-style: normal;			/* the style of the font: italic, normal */
+	font-weight: bold;			/* the weight of the font: bold, normal */
+}
+
+#alert #message {
+	margin-top: 50px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-left: 70px;
+	color: #fff;
+	font-size: 14px;
+	font-style: normal;			/* the style of the font: italic, normal */
+	font-weight: normal;			/* the weight of the font: bold, normal */
+}
+
+
+#alert #owner {
+	display: block;
+	margin-top: 150px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 100px;
+	color: #999;
+	font-size: 10px;
+	font-style: italic;			/* the style of the font: italic, normal */
+	font-weight: normal;			/* the weight of the font: bold, normal */
+}
+
+
+
+
+/* Definitions for dialog boxes */
+.dialog {
+	background-color: #3399ff;
+	box-shadow: none;			/* 	TODO - sets the box shadow of the window */
+}
+
+.dialog .titlebar {				/* The overall appearance of the titlebar */
+	background-color: #004d99;		/* sets the button background color, with valid values: any #nnnnnn, transparent */
+	border-style: solid;			/* sets the border style of the button, with valid values: none, solid, groove, ridge, inset, outset, engraved, embossed */
+	border-color: #fff;
+}
+
+.dialog .button #close {
+	/*display: block;			   NOTE: this button can NOT be hidden!!! */
+	color: #fff;				/* sets the color of this buttons icon */
+	background-color: #f00;
+	border-style: none;
+	border-color: #f00;
+	opacity: 1;				/*	TODO - sets the opacity of the faded portion of the buttons icon, with valid values: 0 -OR- 1		DEV NOTE: this just determines whether we should use fl_darker or fl_lighter in the "FrameButton::draw()" of window.cpp */
+}
+
+
+
+
+/* Definitions for Alt-Tab Menu */
+#running {
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	color: #fff;
+	background-color: #004d99;
+	border-style: solid;
+	border-color: #fff;
+	border-radius: 4px;			/* 	TODO - sets the border radius of the popup */
+}
+
+#running .icon {
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	padding-top: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	height: 48px;
+	width: 48px;
+	background-color: #fcc;
+	border-style: solid;
+	border-color: #c00;
+}
+
+#running .icon:focus {
+	background-color: #3399ff;
+	border-style: solid;
+	border-color: #fff;
+}

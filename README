@@ -1,0 +1,259 @@
+[PREAMBLE]
+
+	Thanks for taking interest in fxWM! This project is currently still in
+	beta, but aside from several known bugs this software is stable. This is
+	an active project and is part of a larger set of programs. We will add
+	a small list of items we want to implement, but for a full, up-to-date
+	list, please visit our website @ http://www.cliquesoft.org.
+
+		TODO
+			o add _NET_WM
+			o expand the css declarations
+			o create additional supervisors
+			o Multi-monitor support
+			o Screen capture abilities
+
+
+
+
+[FOR THE IMPATIENT]
+
+	To Compile:
+		1. Make any desired changes to config.h and io.h
+		2. From source dir: ./make [PREFIX=/packaging/dir]
+
+	To Compile and Install:
+		1. Make any desired changes to config.h and io.h
+		2. From source dir: ./make [PREFIX=/packaging/dir] install
+
+	Examples of Starting:
+		fxwm -S /usr/bin/terminal
+		fxwm -F -S /usr/bin/terminal
+		fxwm -F -BG -S /usr/bin/terminal -o 0:0:40:0
+
+	Examples of other supervisors:
+		wbar		fxwm -S /usr/bin/wbar -o 0:0:32:0
+		web.de		fxwm -F -S /usr/bin/web.de -c -o 0:0:0:40
+
+
+
+
+[EXAMPLES OF FUNCTIONALITY]
+
+	Desktop
+	While still the most popular application of a window manager, fxWM goes
+	a step further than the competition by allowing for the complete user
+	defined configuration of the looks and layout of the window chrome. Also
+	included is the ability to communicate via socket and fifo to implement
+	real-time changes and event responses! To see some examples, check out
+	the "Some Examples" segment below.
+
+	Mobile
+	Today, more and more devices are becoming mobile. As a result we wanted
+	to make a window manager that worked in this enviroment as well. Start
+	by modifying the chrome.css file to adjust the window padding for all
+	running applications (using the ".window { padding-* }" values). Now be
+	sure to start FXwm with the "-f" switch which will make all software
+	run in fullscreen mode without the titlebar. You may additionally want
+	to use the "-o" switch to keep some part of the supervisor exposed as
+	a way to retain navigation of the underlying system.
+
+	Kiosk
+	These can be found everywhere and typically need only a single
+	application running at all times. However, when something breaks, you
+	may need to regain traditional desktop functionality of the device. To
+	achieve this using fxWM, start the system as usual, issue a full screen
+	command for the desired window, and finally disable the window manager.
+
+		1. Find all running windows
+		   # echo list | socat - /tmp/.fxwm-control
+		   0x02003*	0	Host	kiosk	My_Kiosk_App
+		   0x02011	0	Host	web.ui	web.de
+		2. Full screen the 'kiosk' application
+		   # echo "set 0x02003 state fullscreen" | socat - /tmp/.fxwm-control
+		   OK
+		3. Disable the window manager
+		   # echo disable | socat - /tmp/.fxwm-control
+
+	Now when you press the toggle key combination (CTRL+ALT+t by default),
+	the window manager will toggle between being enabled and disabled.
+
+	Please note, that in order to make this work as described, fxWM must
+	have been compiled with the TOGGLECODE_HOTKEYS turned on (via config.h)
+	along with your desired key combination defined in the io.h file.
+
+
+
+
+[FOR THE SYSTEM INTEGRATOR]
+
+	Dependencies:
+		There are only several binaries that need to be installed in
+		order to compile this package:
+
+			o Standard tools such as find, grep, cut, etc
+			o Bash
+			o A C/C++ compiler such as gcc/g++
+			o FLTK 1.3 dev package for your distro
+
+
+	To Compile:
+		Currently there is no need for the 'make' system in order to
+		build this software on your system. To compile this software you
+		only need to issue the following command from inside the source
+		directory:
+
+			./make [PREFIX=/packaging/dir] [install]
+
+		If you simply want to compile the software, then do not include
+		any of the optional parameters. If you do wish to install after
+		building, then at least include a trailing 'install' switch.
+		Package maintainers can optionally provide the 'PREFIX' switch
+		to define where the directory tree should be installed for easy
+		packaging of the software. If you are uncertain what a package 
+		maintainer is, then you should not use the 'PREFIX' switch.
+
+		You should, however, look at the config.h and io.h files to
+		make any hard coded changes before the compiling process gets
+		started. Those files contain which features the software will
+		have along with hotkey values.
+
+	To Start:
+		Unlike most, if not all, other window managers, this wm actually
+		only manages the windows. Any desktop environment "supervision"
+		has been removed, so things like a taskbar or right-clicking on
+		the desktop background to activate a menu system, will not work.
+		Instead, you define what you want to use as the "supervisor" of
+		your system. The most basic example of this would be any one of
+		many terminal emulators such as 'aterm' or 'konsole'. This would
+		allow you to start any supplemental software from the console
+		when calling software in the background (e.g. with a trailing
+		ampersand '&' character). Another option could be to use 'wbar'.
+		We also have built another software known as 'web.de' that can
+		use a web browser to control the environment. See our website
+		(http://www.cliquesoft.org) for more information.
+
+		Since a supervisor is required in order to run the software, you
+		must tell fxWM what it is so that certain conditions no longer
+		apply (e.g. the ability to stop or close it). There is also many
+		other switches to control both the supervisor and applications
+		independent of one another. To see them simply type:
+
+			fxwm --help
+
+	To Demo:
+		If you would like to demo the software before installing it on
+		your system, you can use a nested X server such as Xephyr or
+		Xnest. An example as been included below:
+
+			Xephyr :1 -screen 1024x768 &
+			fxwm -F -S /usr/bin/konsole -o 0:0:40:0 -display localhost:1
+
+	Some Examples:
+		SOCKETS
+		In the event you would like to use sockets to communicate with
+		the fxWM window manager, we will provide some basic examples
+		below:
+
+			To refresh the window chrome in the GUI after making any
+			adjustments to the ~/.fxwm/chrome.css file:
+
+			# echo chrome | socat - /tmp/.fxwm-control
+
+			To get the current limits that a window can occupy when
+			in the fullscreen state:
+
+			# echo 'get limit' | socat - /tmp/.fxwm-control
+			1920x1045
+
+			To set new limits that all windows can visually use:
+
+			# echo 'set limit 1024x786' | socat - /tmp/.fxwm-control
+
+			To show the current applications list type:
+
+			# echo list | socat - /tmp/.fxwm-control
+
+			To make a windows' state become maximized try:
+			[NOTE: the 0x02003 value came from the above list call]
+
+			# echo 'set 0x02003 state maximized' | socat - /tmp/.fxwm-control
+
+			To see a demo of an alert:
+
+			# echo 'false||App Name|Test Title|Some text as the body \
+			of the alert|' | socat - /tmp/.fxwm-control
+
+		MONITOR
+		As users interact with fxWM, certain events get triggered which
+		can be harnessed by the supervisor to perform some subsequent
+		action. Reading from the FIFO is simple and can be performed by
+		executing the following:
+
+			# read EVENT < /tmp/.fxwm-monitor; echo "$EVENT"
+
+		To do something meaningful however, you must incorporate a litte
+		more code...
+
+			# read E < /tmp/.fxwm-monitor; if [ "$E" -eq 'run' ]; \
+			then echo "The user is requesting the run menu"; fi
+
+		Now when the user presses the hotkeys for the "Run Menu" (which
+		are CTRL+ALT+R by default), you will have the above message
+		shown in your terminal.
+
+	More Info:
+		More information can be obtained by looking through the man page
+		for this project.
+
+
+
+
+[BUGS]
+
+	o Unpredictable results with the absence of a fully-defined chrome.css
+	o Not all chrome.css declarations in chrome.css are implemented
+	o Some dialog windows stay in the ALT+TAB window after they have been
+	  closed (e.g. the Search/Replace screen in gedit)
+	o First window that is opened does not receive focus upon loading - all
+	  subsequent window creations do
+	o Crashes when focus is taken off certain dialog windows (e.g. Firefox
+	  Save-As)
+	o The ALT-TAB window will popup randomly when clicking around the
+	  windows' titlebar
+	o Can not assign the META keys as key combinations for window manager
+	  functions such as 'Show the Desktop' (keymap issue?)
+		http://tinycorelinux.net/faq.html#keyboard
+		http://forum.tinycorelinux.net/index.php?topic=19847.0
+	o Buttons with dis-similar widths cause misalignment with other titlebar
+	  objects
+	o The alert's 'top' chrome.css value of less than '20px' does not work
+	o Refreshing the chrome after titlebar resizing and/or relocation will
+	  crash the window manager
+
+
+
+
+[LICENSING]
+
+	This software currently contains files from various projects to expand
+	its capabilities, but can be configured to not use them. As a result
+	this package has to be released under a dual license, CPLv2 and GPLv2+.
+	Both licenses are compatible with one another so there should not be any
+	issues there. We will cover the licensing of the files below:
+
+		Core (CPLv2)
+			o alerts.*
+			o capture.*
+			o chrome.*
+			o icons.*
+			o io.*
+			o main.*
+			o socket.*
+			o switch.*
+			o window.*
+
+		Extras (GPLv2+)
+			o Desktop.*		Enables multiple desktops
+			o Rotated.*		Enables movement of titlebars
+
