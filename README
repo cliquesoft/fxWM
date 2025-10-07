@@ -1,4 +1,4 @@
-[PREAMBLE]
+# [PREAMBLE]
 
 	Thanks for taking interest in fxWM! This project is currently still in
 	beta, but aside from several known bugs this software is stable. This is
@@ -16,7 +16,7 @@
 
 
 
-[FOR THE IMPATIENT]
+# [FOR THE IMPATIENT]
 
 	To Compile:
 		1. Make any desired changes to config.h and io.h
@@ -38,7 +38,7 @@
 
 
 
-[EXAMPLES OF FUNCTIONALITY]
+# [EXAMPLES OF FUNCTIONALITY]
 
 	Desktop
 	While still the most popular application of a window manager, fxWM goes
@@ -85,7 +85,7 @@
 
 
 
-[FOR THE SYSTEM INTEGRATOR]
+# [FOR THE SYSTEM INTEGRATOR]
 
 	Dependencies:
 		There are only several binaries that need to be installed in
@@ -209,7 +209,7 @@
 
 
 
-[BUGS]
+# [BUGS]
 
 	o Unpredictable results with the absence of a fully-defined chrome.css
 	o Not all chrome.css declarations in chrome.css are implemented
@@ -234,7 +234,7 @@
 
 
 
-[LICENSING]
+# [LICENSING]
 
 	This software currently contains files from various projects to expand
 	its capabilities, but can be configured to not use them. As a result
