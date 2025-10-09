@@ -7,11 +7,11 @@
 	list, please visit our website @ http://www.cliquesoft.org.
 
 		TODO
-			o add _NET_WM
-			o expand the css declarations
-			o create additional supervisors
-			o Multi-monitor support
-			o Screen capture abilities
+		- add _NET_WM
+		- expand the css declarations
+		- create additional supervisors
+		- Multi-monitor support
+		- Screen capture abilities
 
 
 
@@ -256,4 +256,26 @@
 		Extras (GPLv2+)
 			o Desktop.*		Enables multiple desktops
 			o Rotated.*		Enables movement of titlebars
+
+
+
+
+# [FUTURE DEV TIMELINE]
+
+	Since we are working with several many projects (13 on github alone),
+	we are going to provide an anticipated timeline of releases using
+	internal staff. Obviously outside contribution will advance these
+	forecasted dates.
+
+	2025 Oct - completion of ModuleMaker for webWorks
+	2025 Dec - migration of existing webWorks modules using ModuleMaker
+	2026 Jan - migration of Tracker into webWorks and deprecation of
+	           of standalone project
+	2026 Feb - update paged to 2018 code base from ACME
+	         - update pax to work with (TC) TinyCore Linux
+	         - apply any patches for bug fixes to existing projects
+	2026 Mar - update web.libs for dittodata and web.de
+	2026 Jul - move code from web.de into cli.de and update the former
+	           to use the latter via XML communication
+	2026     - rest of 2026 tbd
 
